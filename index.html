@@ -8,7 +8,6 @@
     <link rel="icon" href="thumbnail.jpeg" type="image/jpeg">
 
     <style>
-        /* General body styling */
         body {
             font-family: Cochin, serif;
             display: flex;
@@ -19,36 +18,30 @@
             margin: 0;
             background-color: #ffffff;
             text-align: center;
-            overflow: hidden;
+            padding: 0 10px; /* Added padding to prevent content touching screen edges */
+            box-sizing: border-box;
         }
-
-        /* Title Styling */
         h1 {
             position: fixed;
             bottom: 0;
             color: black;
             margin: 0;
             padding: 0;
-            font-size: 10vw;  /* Responsive font size */
+            font-size: 10vw;  /* Responsive font size based on viewport width */
         }
-
-        /* Input container styling */
         .input-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;  /* Limit max width */
         }
-
-        /* Input field styling */
         input {
-            width: 100%;
-            max-width: 360px; /* Limit max width */
+            width: 80%;  /* Make input width relative to the container */
+            max-width: 360px; /* Max width */
             padding: 10px;
             border: 2px solid #595B8E;
-            font-size: 4vw;  /* Relative to viewport */
+            font-size: 2.5vw; /* Responsive font size */
             text-align: center;
             cursor: text;
             color: black;
@@ -56,59 +49,42 @@
             caret-color: #595B8E;
             font-family: Cochin, serif;
         }
-
         input:focus {
             border-color: #595B8E;
         }
-
-        /* Mark button styling */
         mark {
             background-color: #595B8E;
             color: white;
             cursor: pointer;
-            font-size: 5vw;  /* Relative to viewport */
+            font-size: 2vw; /* Responsive font size */
             padding: 10px;
-            border-radius: 5px;
-            margin-left: 10px;
         }
 
-        /* Media queries for responsive design */
+        /* Media Query for smaller screens */
         @media (max-width: 600px) {
             h1 {
-                font-size: 15vw;  /* Reduce font size for smaller screens */
+                font-size: 15vw;  /* Reduce h1 size on smaller screens */
             }
-
             input {
-                font-size: 5vw;
-                max-width: 80%;
+                font-size: 4vw;  /* Increase font size for smaller screens */
+                width: 90%;  /* Increase input width for small screens */
             }
-
             mark {
-                font-size: 6vw;
+                font-size: 4vw;  /* Increase mark size */
             }
         }
 
         @media (max-width: 400px) {
             h1 {
-                font-size: 20vw;  /* Even smaller font size for tiny screens */
+                font-size: 20vw;  /* Further reduce h1 size for very small screens */
             }
-
             input {
-                font-size: 6vw;
+                font-size: 5vw;  /* Increase font size for very small screens */
             }
-
             mark {
-                font-size: 7vw;
+                font-size: 5vw;  /* Increase mark size */
             }
         }
-
-        /* For large screens */
-        @media (min-width: 1000px) {
-            h1 {
-                font-size: 8vw;  /* Bigger font size for large screens */
-            }
-        }
-
     </style>
 </head>
 <body>
