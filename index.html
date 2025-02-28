@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHORTY</title>
+    <!-- Adding the thumbnail/favicon -->
+    <link rel="icon" href="thumbnail.jpeg" type="image/jpeg">
+
+    <style>
+        body {
+            font-family: Cochin, serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+            text-align: center;
+        }
+        h1 {
+            position: fixed;
+            bottom: 0;
+            color: black;
+            margin: 0;
+            padding: 0;
+            font-size: 360px;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        input {
+            width: 360px;
+            padding: 0px;
+            border: 2px solid #595B8E;
+            font-size: 24px;
+            text-align: center;
+            cursor: text;
+            color: black;
+            outline: none;
+            caret-color: #595B8E;
+            font-family: Cochin, serif;
+        }
+        input:focus {
+            border-color: #595B8E;
+        }
+        mark {
+            background-color: #595B8E;
+            color: white;
+            cursor: pointer;
+            font-size: 28px;
+            padding: 0px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SHORTY</h1>
+    <div class="input-container">
+        <input type="text" id="urlInput">
+        <mark id="shortenBtn" onclick="shortenUrls()">Shorten URL</mark>
+    </div>
+
+    <script>
+        let shortenedUrlsText = "";
+
+        window.onload = function() {
+            document.getElementById("urlInput").value = ""; // Clear input field on refresh
+            document.getElementById("urlInput").focus();
+        };
+
+        document.getElementById("urlInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                shortenUrls();
+            }
+        });
+
+        async function shortenUrls() {
+            let input = document.getElementById("urlInput").value.trim();
+            if (!input) {
+                location.reload();  // Reload page if input is empty
+                return;
+            }
+
+            let urls = input.match(/https?:\/\/[^\s]+/g) || [];
+
+            if (urls.length === 0) {
+                location.reload();  // Reload the page if input is not a valid URL
+                return;
+            }
+
+            let shortenedUrls = [];
+
+            for (let url of urls) {
+                try {
+                    let response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
+                    let shortUrl = await response.text();
+                    shortenedUrls.push(shortUrl);
+                } catch (err) {  // Handle error by reloading the page
+                    location.reload();  // Reload the page if there's an error in shortening the URL
+                    return;
+                }
+            }
+
+            shortenedUrlsText = shortenedUrls.join("\n");
+
+            // Replace input with shortened URL
+            document.getElementById("urlInput").value = shortenedUrlsText;
+
+            let shortenBtn = document.getElementById("shortenBtn");
+            shortenBtn.textContent = "Copy URL";
+            shortenBtn.style.backgroundColor = "#8E8C59";  /* Custom darker green */
+            shortenBtn.style.color = "white";
+            shortenBtn.onclick = function() {
+                copyToClipboard();
+            };
+
+            // Change input outline color to match the button's highlight color
+            document.getElementById("urlInput").style.borderColor = "#8E8C59";
+
+            enableKeyboardCopy();
+        }
+
+        function copyToClipboard() {
+            if (!shortenedUrlsText.trim()) {
+                location.reload();  // Reload the page if no shortened URL to copy
+                return;
+            }
+
+            navigator.clipboard.writeText(shortenedUrlsText)
+                .catch(err => {
+                    location.reload();  // Reload if there's an error while copying
+                });
+        }
+
+        function enableKeyboardCopy() {
+            document.addEventListener("keydown", function(event) {
+                // Listen for Cmd + C or Ctrl + C
+                if ((event.metaKey || event.ctrlKey) && event.key === "c") {
+                    event.preventDefault();  // Prevent default to stop browser behavior
+                    copyToClipboard(); // Trigger the copy function
+                }
+            });
+        }
+
+        // If user does anything except copy the URL after it's shortened, refresh the page
+        document.addEventListener("click", function() {
+            if (document.getElementById("shortenBtn").textContent === "Copy URL") {
+                location.reload();
+            }
+        });
+
+        document.addEventListener("keypress", function(event) {
+            if (document.getElementById("shortenBtn").textContent === "Copy URL") {
+                location.reload();
+            }
+        });
+
+        let inactivityTimeout;
+        const resetInactivityTimer = () => {
+            clearTimeout(inactivityTimeout);
+            inactivityTimeout = setTimeout(() => {
+                location.reload();
+            }, 60000);
+        };
+
+        document.addEventListener("mousemove", resetInactivityTimer);
+        document.addEventListener("keypress", resetInactivityTimer);
+        document.addEventListener("click", resetInactivityTimer);
+        document.addEventListener("touchstart", resetInactivityTimer);
+
+        resetInactivityTimer();
+    </script>
+
+</body>
+</html>
