@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHORTY</title>
-    <!-- Adding the thumbnail/favicon -->
     <link rel="icon" href="thumbnail.jpeg" type="image/jpeg">
 
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: Cochin, serif;
             display: flex;
@@ -15,74 +20,96 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            margin: 0;
             background-color: #ffffff;
             text-align: center;
-            padding: 0 10px; /* Added padding to prevent content touching screen edges */
-            box-sizing: border-box;
+            padding: 2vh;
         }
+
         h1 {
             position: fixed;
-            bottom: 0;
+            bottom: 2vh;
             color: black;
-            margin: 0;
-            padding: 0;
-            font-size: 10vw;  /* Responsive font size based on viewport width */
+            font-size: clamp(10vw, 15vw, 20vw); /* Adjusts between mobile and desktop */
+            white-space: nowrap;
         }
+
         .input-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            max-width: 600px;  /* Limit max width */
+            justify-content: left;
+            align-items: left;
+            width: auto; /* Allow container to resize based on content */
+            min-width: 70vw; /* Minimum width for better responsiveness */
+            max-width: 100%; /* Ensure it doesn't get too large */
         }
+
         input {
-            width: 80%;  /* Make input width relative to the container */
-            max-width: 360px; /* Max width */
-            padding: 10px;
+            flex: 1;
+            height: auto; /* Let the input height match the text size */
+            padding: 0;
             border: 2px solid #595B8E;
-            font-size: 2.5vw; /* Responsive font size */
+            font-size: clamp(14px, 3vw, 20px); /* Ensures readability */
             text-align: center;
-            cursor: text;
             color: black;
             outline: none;
             caret-color: #595B8E;
             font-family: Cochin, serif;
+            min-width: 50px;
+            line-height: 1; /* Ensures the input height matches the text size */
         }
-        input:focus {
-            border-color: #595B8E;
-        }
+
         mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background-color: #595B8E;
             color: white;
             cursor: pointer;
-            font-size: 2vw; /* Responsive font size */
-            padding: 10px;
+            font-size: clamp(14px, 3vw, 20px); /* Text size scales with button size */
+            font-weight: bold;
+            text-align: center;
+            user-select: none;
+            height: auto; /* Match height to text size */
+            padding: 2px; /* No extra padding */
+            white-space: nowrap; /* Prevent text from wrapping */
         }
 
-        /* Media Query for smaller screens */
-        @media (max-width: 600px) {
+        input:focus {
+            border-color: #595B8E;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 768px) {
             h1 {
-                font-size: 15vw;  /* Reduce h1 size on smaller screens */
+                font-size: 20vw;
             }
-            input {
-                font-size: 4vw;  /* Increase font size for smaller screens */
-                width: 90%;  /* Increase input width for small screens */
-            }
-            mark {
-                font-size: 4vw;  /* Increase mark size */
+            input, mark {
+                font-size: 4.5vw;
+                height: auto;
             }
         }
 
-        @media (max-width: 400px) {
+        /* Tablet optimization */
+        @media (min-width: 768px) and (max-width: 1024px) {
             h1 {
-                font-size: 20vw;  /* Further reduce h1 size for very small screens */
+                font-size: 20vw;
             }
-            input {
-                font-size: 5vw;  /* Increase font size for very small screens */
+            input, mark {
+                font-size: 3.5vw;
+                height: auto;
             }
-            mark {
-                font-size: 5vw;  /* Increase mark size */
+        }
+
+        /* Laptop & Large Screens */
+        @media (min-width: 1025px) {
+            h1 {
+                font-size: 20vw;
+            }
+            .input-container {
+                max-width: 600px;
+            }
+            input, mark {
+                font-size: 2.5vw;
+                height: auto;
             }
         }
     </style>
@@ -92,7 +119,7 @@
     <h1>SHORTY</h1>
     <div class="input-container">
         <input type="text" id="urlInput">
-        <mark id="shortenBtn" onclick="shortenUrls()">Shorten URL</mark>
+        <mark id="shortenBtn" onclick="shortenUrls()">ENTER URL</mark>
     </div>
 
     <script>
@@ -113,14 +140,14 @@
         async function shortenUrls() {
             let input = document.getElementById("urlInput").value.trim();
             if (!input) {
-                location.reload();  // Reload page if input is empty
+                location.reload();
                 return;
             }
 
             let urls = input.match(/https?:\/\/[^\s]+/g) || [];
 
             if (urls.length === 0) {
-                location.reload();  // Reload the page if input is not a valid URL
+                location.reload();
                 return;
             }
 
@@ -131,62 +158,55 @@
                     let response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
                     let shortUrl = await response.text();
                     shortenedUrls.push(shortUrl);
-                } catch (err) {  // Handle error by reloading the page
-                    location.reload();  // Reload the page if there's an error in shortening the URL
+                } catch (err) {
+                    location.reload();
                     return;
                 }
             }
 
             shortenedUrlsText = shortenedUrls.join("\n");
-
-            // Replace input with shortened URL
             document.getElementById("urlInput").value = shortenedUrlsText;
 
             let shortenBtn = document.getElementById("shortenBtn");
-            shortenBtn.textContent = "Copy URL";
-            shortenBtn.style.backgroundColor = "#8E8C59";  /* Custom darker green */
-            shortenBtn.style.color = "white";
+            shortenBtn.textContent = "COPY URL";
+            shortenBtn.style.backgroundColor = "#8E8C59";
             shortenBtn.onclick = function() {
                 copyToClipboard();
             };
 
-            // Change input outline color to match the button's highlight color
             document.getElementById("urlInput").style.borderColor = "#8E8C59";
-
             enableKeyboardCopy();
         }
 
         function copyToClipboard() {
             if (!shortenedUrlsText.trim()) {
-                location.reload();  // Reload the page if no shortened URL to copy
+                location.reload();
                 return;
             }
 
             navigator.clipboard.writeText(shortenedUrlsText)
                 .catch(err => {
-                    location.reload();  // Reload if there's an error while copying
+                    location.reload();
                 });
         }
 
         function enableKeyboardCopy() {
             document.addEventListener("keydown", function(event) {
-                // Listen for Cmd + C or Ctrl + C
                 if ((event.metaKey || event.ctrlKey) && event.key === "c") {
-                    event.preventDefault();  // Prevent default to stop browser behavior
-                    copyToClipboard(); // Trigger the copy function
+                    event.preventDefault();
+                    copyToClipboard();
                 }
             });
         }
 
-        // If user does anything except copy the URL after it's shortened, refresh the page
         document.addEventListener("click", function() {
-            if (document.getElementById("shortenBtn").textContent === "Copy URL") {
+            if (document.getElementById("shortenBtn").textContent === "COPY URL") {
                 location.reload();
             }
         });
 
         document.addEventListener("keypress", function(event) {
-            if (document.getElementById("shortenBtn").textContent === "Copy URL") {
+            if (document.getElementById("shortenBtn").textContent === "COPY URL") {
                 location.reload();
             }
         });
